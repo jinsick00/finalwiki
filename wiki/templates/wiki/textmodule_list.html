@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block main_area %}
+
+<a href="{% url 'wiki:textmodule_create' %}">
+    모듈생성
+</a>
+
+
+<!-- 연도 선택 드롭다운 -->
+<form id="yearForm" class="mb-4">
+    <label for="yearSelect">연도 선택:</label>
+    <select id="yearSelect" class="form-select w-auto d-inline">
+        <option value="">전체</option>
+        {% for year in years_list %}
+        <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<script>
+    // 드롭다운에서 연도를 선택하면 URL을 동적으로 생성하여 이동
+    document.getElementById('yearSelect').addEventListener('change', function() {
+        const selectedYear = this.value;
+        if (selectedYear) {
+            window.location.href = "{% url 'wiki:textmodule_list_filtered' years=0 %}".replace("0", selectedYear);
+        } else {
+            window.location.href = "{% url 'wiki:textmodule_list' %}";
+        }
+    });
+</script>
+
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for parent in module_list %}
+        <div class="col">
+            <div class="card bg-dark text-light h-100">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <a href="{% url 'wiki:textmodule_detail' slug=parent.slug years=parent.years %}">
+                            {{ parent.title }}
+                        </a>
+                    </h3>
+                    {% if parent.child_modules.all %}
+                    <div class="mt-3">
+                        <ul class="list-group list-group-flush">
+                            {% for child in parent.child_modules.all %}
+                            <li class="list-group-item bg-secondary text-light">
+                                <a href="{% url 'wiki:textmodule_detail' slug=child.slug years=child.years %}">
+                                    {{ child.title }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+
+{% endblock %}

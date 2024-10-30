@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block main_area %}
+<h1>모듈 생성</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div id="file-upload-section" class="mb-3">
+        <label class="form-label">파일 업로드</label>
+        <input type="file" name="file" class="form-control mb-2">
+    </div>
+
+    <!-- 파일 추가 버튼 -->
+    <button type="button" class="btn btn-outline-primary" id="add-file-btn">파일 추가</button>
+
+    <button type="submit" class="btn btn-primary mt-3">생성</button>
+    <a href="{% url 'wiki:textmodule_list' %}" class="btn btn-secondary mt-3">취소</a>
+</form>
+
+<script>
+    document.getElementById('add-file-btn').addEventListener('click', function() {
+        // 새로운 파일 입력 필드 생성
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.name = 'file';
+        fileInput.className = 'form-control mb-2';
+
+        // 파일 입력 필드를 파일 업로드 섹션에 추가
+        document.getElementById('file-upload-section').appendChild(fileInput);
+    });
+</script>
+
+{% endblock %}

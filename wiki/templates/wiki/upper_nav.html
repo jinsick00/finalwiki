@@ -1,0 +1,16 @@
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: black; position: fixed; top: 0; width: 100%; z-index: 1000; height: 60px; background-color: black; border-bottom: 2px solid #555;">
+    <div class="container-fluid">
+        <a class="navbar-brand text-light ms-3" href="{% url 'index' %}"><strong>교육행정라이브러리</strong></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                
+                <li class="nav-item">
+                    <a class="nav-link text-light" href="{% url 'wiki:textmodule_list' %}">위키</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

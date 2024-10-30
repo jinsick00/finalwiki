@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block main_area %}
+<h1>모듈 수정</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <!-- 새 파일 추가 -->
+    <h5>새 파일 추가</h5>
+    <div id="file-upload-container">
+        <input type="file" name="new_files" class="form-control mb-2">
+    </div>
+    <button type="button" id="add-file-button" class="btn btn-outline-primary">새 파일 추가</button>
+
+    <!-- 기존 파일 목록 -->
+    <h5>기존 파일</h5>
+    <ul class="list-group">
+        {% for existing_file in existing_files %}
+        <li class="list-group-item bg-secondary text-light">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ existing_file.file.url }}" download="{{ existing_file.file_name }}" class="text-light">
+                    {{ existing_file.file_name }}
+                </a>
+                <input type="checkbox" name="delete_files" value="{{ existing_file.id }}"> 삭제
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <button type="submit" class="btn btn-primary mt-3">수정하기</button>
+</form>
+
+<script>
+    document.getElementById('add-file-button').addEventListener('click', function() {
+        const container = document.getElementById('file-upload-container');
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.name = 'new_files';  // 다중 파일 업로드용 name 설정
+        input.className = 'form-control mb-2';
+        container.appendChild(input);
+    });
+</script>
+
+{% endblock %}

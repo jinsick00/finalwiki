@@ -1,0 +1,24 @@
+<nav class="d-flex flex-column flex-shrink-0 p-3 bg-black text-light custom-scrollbar" style="width: 250px; height: 100vh; position: fixed; border-right: 2px solid #555; overflow-y: auto;">
+    <ul class="nav nav-pills flex-column mb-auto">
+        <!-- 부모 모듈 반복 -->
+        {% for parent in module_list %}
+        <li class="nav-item" style="border-top: 1px solid #555; margin-left: 10px; margin-right: 10px;">
+           
+                <strong>{{ parent.title }}</strong>
+            </a>
+            <!-- 자식 모듈이 있는 경우 -->
+            {% if parent.child_modules.all %}
+            <ul class="nav flex-column ms-3 mt-2">
+                {% for child in parent.child_modules.all %}
+                <li class="nav-item">
+                    
+                        {{ child.title }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</nav>
