@@ -1,0 +1,22 @@
+<!-- sidenav_detail.html -->
+<nav class="d-flex flex-column flex-shrink-0 p-3 bg-black text-light custom-scrollbar" style="width: 250px; height: 100vh; position: fixed; border-right: 2px solid #555; overflow-y: auto;">
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item" style="border-top: 1px solid #555; margin-left: 10px; margin-right: 10px;">
+            <!-- 현재 모듈 제목을 하이퍼링크로 표시 -->
+            <a href="{% url 'wiki:textmodule_detail' slug=current_module.slug years=current_module.years %}" class="text-light text-decoration-none">
+                <strong>{{ current_module.title }}</strong>
+            </a>
+            {% if child_modules %}
+            <ul class="nav flex-column ms-3 mt-2">
+                {% for child in child_modules %}
+                <li class="nav-item">
+                    <a href="{% url 'wiki:textmodule_detail' slug=child.slug years=child.years %}" class="text-light text-decoration-none">
+                        {{ child.title }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </li>
+    </ul>
+</nav>

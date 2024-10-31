@@ -7,6 +7,8 @@ from django.urls import reverse_lazy
 from .forms import TextModuleForm, TextModuleFileForm
 from django.http import HttpRequest
 from django.db import IntegrityError
+from django.db.models import Max, Q
+
 
 # Create your views here.
 
@@ -16,11 +18,26 @@ class TextModuleListView(ListView):
     context_object_name = 'module_list'
 
     def get_queryset(self):
-        # URL에서 'years' 파라미터를 받아 필터링
-        years = self.kwargs.get('years')
-        if years:
-            return TextModule.objects.filter(years=years, parent_module__isnull=True)
-        return TextModule.objects.filter(parent_module__isnull=True)  # 전체 목록 (기본값)
+        selected_year = self.kwargs.get('years')
+
+        queryset = TextModule.objects.filter(parent_module__isnull=True)
+
+        latest_modules = queryset.values('title').annotate(latest_year=Max('years'))
+        filtered_queryset = queryset.filter(
+            title__in=[item['title'] for item in latest_modules],
+            years__in=[item['latest_year'] for item in latest_modules]
+    )
+
+        if selected_year:
+            filtered_queryset = filtered_queryset.filter(years=selected_year)
+
+        return filtered_queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['selected_year'] = self.kwargs.get('years')
+        context['years_list'] = TextModule.objects.values_list('years', flat=True).distinct()
+        return context
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -42,19 +59,17 @@ class TextModuleDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['child_module_form'] = TextModuleForm(hide_years=True)
-        context['file_form'] = TextModuleFileForm()
-        context['child_modules'] = self.object.child_modules.all()  # 바로 아래 자식 모듈들
+        context['current_module'] = self.object
+        context['child_modules'] = self.object.child_modules.all()  # 직계 자식 모듈만 불러오기
 
-        # 부모 모듈 리스트 가져오기
+        # 상위 모듈들을 담는 리스트 생성
         parent_modules = []
         current_module = self.object
         while current_module.parent_module:
-            parent_modules.insert(0, current_module.parent_module)  # 최상위 부모가 먼저 오도록 앞에 추가
             current_module = current_module.parent_module
+            parent_modules.insert(0, current_module)  # 최상위 부모부터 시작하도록 리스트에 추가
 
-        context['parent_modules'] = parent_modules
-        context['file_list'] = TextModuleFile.objects.filter(module=self.object)
+        context['parent_modules'] = parent_modules  # 상위 모듈 리스트 추가
         return context
     
     def form_valid(self, form):

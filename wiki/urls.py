@@ -10,8 +10,8 @@ urlpatterns = [
     path('', TextModuleListView.as_view(), name='textmodule_list'),
     path('create/', TextModuleCreateView.as_view(), name='textmodule_create'),  # 부모 없는 모듈 생성
     path('year/<int:years>/', TextModuleListView.as_view(), name='textmodule_list_filtered'),  # 기본 페이지를 ListView로 설정
-    path('<str:slug>/<int:years>/', TextModuleDetailView.as_view(), name='textmodule_detail'),
-    path('<str:slug>/<int:years>/edit/', TextModuleUpdateView.as_view(), name='textmodule_edit'),
+    path('<path:slug>/<int:years>/', TextModuleDetailView.as_view(), name='textmodule_detail'),
+    path('<path:slug>/<int:years>/edit/', TextModuleUpdateView.as_view(), name='textmodule_edit'),
 ]
 
 if settings.DEBUG:

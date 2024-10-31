@@ -20,7 +20,13 @@
         <div class="row">
             <!-- 좌측 Sidenav 영역, 고정된 너비와 위치 -->
             <div class="col-md-3 bg-black p-0 custom-sidenav" style="position: fixed; top: 60px; height: calc(100vh - 60px); z-index: 1020;">
-                {% include 'wiki/sidenav_list.html' %}
+
+                
+                {% if request.resolver_match.view_name == 'wiki:textmodule_list' or request.resolver_match.view_name == 'wiki:textmodule_list_filtered' %}
+                    {% include 'wiki/sidenav_list.html' %}
+                {% elif request.resolver_match.view_name == 'wiki:textmodule_detail' %}
+                    {% include 'wiki/sidenav_detail.html' %}
+                {% endif %}
             </div>
 
             <!-- 메인 콘텐츠 영역 -->

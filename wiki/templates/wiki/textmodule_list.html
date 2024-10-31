@@ -6,8 +6,7 @@
     모듈생성
 </a>
 
-
-<!-- 연도 선택 드롭다운 -->
+<!-- 드롭다운 -->
 <form id="yearForm" class="mb-4">
     <label for="yearSelect">연도 선택:</label>
     <select id="yearSelect" class="form-select w-auto d-inline">
@@ -19,14 +18,10 @@
 </form>
 
 <script>
-    // 드롭다운에서 연도를 선택하면 URL을 동적으로 생성하여 이동
     document.getElementById('yearSelect').addEventListener('change', function() {
         const selectedYear = this.value;
-        if (selectedYear) {
-            window.location.href = "{% url 'wiki:textmodule_list_filtered' years=0 %}".replace("0", selectedYear);
-        } else {
-            window.location.href = "{% url 'wiki:textmodule_list' %}";
-        }
+        const url = selectedYear ? `{% url 'wiki:textmodule_list_filtered' years=0 %}`.replace('0', selectedYear) : "{% url 'wiki:textmodule_list' %}";
+        window.location.href = url;
     });
 </script>
 
@@ -40,6 +35,9 @@
                         <a href="{% url 'wiki:textmodule_detail' slug=parent.slug years=parent.years %}">
                             {{ parent.title }}
                         </a>
+                        {% if not selected_year and not parent.parent_module %}
+                        <span class="year-display">({{ parent.years }})</span>
+                        {% endif %}
                     </h3>
                     {% if parent.child_modules.all %}
                     <div class="mt-3">
@@ -60,6 +58,5 @@
         {% endfor %}
     </div>
 </div>
-
 
 {% endblock %}

@@ -3,7 +3,7 @@
         <!-- 부모 모듈 반복 -->
         {% for parent in module_list %}
         <li class="nav-item" style="border-top: 1px solid #555; margin-left: 10px; margin-right: 10px;">
-           
+           <a href="{% url 'wiki:textmodule_detail' slug=parent.slug years=parent.years %}" class="text-light text-decoration-none">
                 <strong>{{ parent.title }}</strong>
             </a>
             <!-- 자식 모듈이 있는 경우 -->
