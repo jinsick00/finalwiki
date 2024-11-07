@@ -72,7 +72,7 @@
 
     <!-- 자식 모듈 생성 폼 (초기에는 숨겨져 있음) -->
     <div id="child-module-form-container" style="display: none; margin-top: 20px;">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" id="child-module-form">
             {% csrf_token %}
             {{ child_module_form.as_p }}
 
@@ -99,7 +99,19 @@
         document.addEventListener('DOMContentLoaded', function() {
             const content = document.querySelector('.content-display'); // Summernote 본문 컨테이너
             const headers = content.querySelectorAll('h3');
-        
+            const toggleFormButton = document.getElementById('toggle-form-button');
+            const formContainer = document.getElementById('child-module-form-container');
+            const childModuleForm = document.getElementById('child-module-form');
+
+            if (toggleFormButton && formContainer) {
+                // 토글 버튼 클릭 시 폼 전체 표시 전환
+                toggleFormButton.addEventListener('click', function(event) {
+                    event.preventDefault();  // 기본 제출 동작 방지
+                    formContainer.style.display = 'block';
+                    toggleFormButton.style.display = 'none';
+                });
+            }
+
             if (headers.length > 0) {
                 // 목차 컨테이너 생성
                 const tocContainer = document.createElement('div');
@@ -108,25 +120,25 @@
                 tocList.id = 'toc-list';
                 tocList.style.listStyleType = 'none';
                 tocList.style.padding = '0';
-        
+
                 headers.forEach((header, index) => {
                     // 본문 h3 앞에 번호 추가
                     header.innerHTML = `<span>${index + 1}. </span>` + header.innerHTML;
-        
+
                     // 각 h3에 고유 ID 추가
                     const headerId = `section-${index + 1}`;
                     header.setAttribute('id', headerId);
-        
+
                     // 목차 항목 생성
                     const listItem = document.createElement('li');
                     listItem.style.marginBottom = '2px';
-        
+
                     const link = document.createElement('a');
                     link.textContent = header.textContent;
                     link.href = `#${headerId}`;
                     link.style.textDecoration = 'none';
                     link.style.color = '#ffffff';
-        
+
                     // hover 상태에서 밑줄이 표시되도록 스타일 수정
                     link.addEventListener('mouseenter', function() {
                         this.style.textDecoration = 'underline';
@@ -134,16 +146,16 @@
                     link.addEventListener('mouseleave', function() {
                         this.style.textDecoration = 'none';
                     });
-        
+
                     listItem.appendChild(link);
                     tocList.appendChild(listItem);
-        
+
                     // h3 클릭 시 목차로 이동하는 이벤트 추가
                     header.addEventListener('click', function() {
                         tocContainer.scrollIntoView({ block: 'start' });
                     });
                 });
-        
+
                 // 목차 타이틀 및 스타일 설정
                 tocContainer.innerHTML = '<h4 style="color: #ffffff;">목차</h4>';
                 tocContainer.appendChild(tocList);
@@ -151,11 +163,11 @@
                 tocContainer.style.border = '1px solid #ffffff';
                 tocContainer.style.borderRadius = '5px';
                 tocContainer.style.backgroundColor = '#000000';
-        
+
                 // Summernote 본문 상단에 목차 삽입
                 content.insertBefore(tocContainer, content.firstChild);
             }
         });
-        </script>
+    </script>
 </div>
 {% endblock %}
