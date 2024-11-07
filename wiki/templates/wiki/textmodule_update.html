@@ -32,6 +32,12 @@
     <button type="submit" class="btn btn-primary mt-3">수정하기</button>
 </form>
 
+<div class="mt-3">
+    <a href="{% url 'wiki:textmodule_detail' slug=object.slug years=object.years %}" class="btn btn-secondary">
+        취소
+    </a>
+</div>
+
 <script>
     document.getElementById('add-file-button').addEventListener('click', function() {
         const container = document.getElementById('file-upload-container');

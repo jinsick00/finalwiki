@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "django_summernote",
     "wiki",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -56,7 +57,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR /'templates'],
+        'DIRS': [BASE_DIR /'config/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,3 +135,15 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / "config/static",  # base.html이 config 디렉터리에 있는 경우
 ]
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 정적 파일 수집 경로
+
+SUMMERNOTE_CONFIG = {
+    'summernote': {
+        'width': '100%',
+        'height': '480px',
+    },
+    'css': (
+        '/static/css/custom_summernote.css',  # 사용자 정의 CSS 파일 경로
+    ),
+}

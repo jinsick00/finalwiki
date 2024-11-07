@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
-from .views import TextModuleListView, TextModuleDetailView, TextModuleCreateView, TextModuleUpdateView
+from .views import TextModuleListView, TextModuleDetailView, TextModuleCreateView, TextModuleUpdateView, TextModuleDeleteView
 
 app_name = 'wiki'
 
@@ -12,6 +12,7 @@ urlpatterns = [
     path('year/<int:years>/', TextModuleListView.as_view(), name='textmodule_list_filtered'),  # 기본 페이지를 ListView로 설정
     path('<path:slug>/<int:years>/', TextModuleDetailView.as_view(), name='textmodule_detail'),
     path('<path:slug>/<int:years>/edit/', TextModuleUpdateView.as_view(), name='textmodule_edit'),
+    path('<path:slug>/<int:years>/delete/', TextModuleDeleteView.as_view(), name='textmodule_delete'),
 ]
 
 if settings.DEBUG:

@@ -33,3 +33,45 @@ nav {
         margin-left: 0;
     }
 }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+th {
+    background-color: rgb(69, 69, 69);
+    text-align: left;
+}
+
+.parent-module-list {
+    display: inline-block;
+    justify-content: flex-end; /* 우측 정렬 */
+    flex-wrap: wrap;
+}
+
+.parent-module-list .badge {
+    margin-left: 5px; /* 부모 모듈 간의 간격 */
+}
+
+.parent-module-list a {
+    color: #ffffff; /* 링크 텍스트 색상 */
+}
+
+.parent-module-list a:hover {
+    text-decoration: underline; /* 마우스 호버 시 밑줄 표시 */
+}
+
+.module-item {
+    border-radius: 5px; /* 모서리 둥글게 */
+    transition: background-color 0.3s; /* 부드러운 전환 효과 */
+}
+
+.module-item:hover {
+    background-color: #343a40; /* hover 시 배경색 */
+}

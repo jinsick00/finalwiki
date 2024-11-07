@@ -1,37 +1,41 @@
 {% extends 'base.html' %}
 
 {% block main_area %}
-<h1>{{ module_detail.title }}</h1>
-
-<div class="mt-3">
-    <h5>내용:</h5>
-    <p>{{ module_detail.content|linebreaks }}</p>
-    <small><strong>연도:</strong> {{ module_detail.years }}</small>
+<div>
+    <h1>{{ module_detail.title }}</h1>
 </div>
 
-<!-- 부모 모듈 리스트 -->
+<!-- 부모 모듈 리스트 (제목 바로 아래, 우측 정렬) -->
 {% if parent_modules %}
-<div class="mt-4">
-    <h5>상위 모듈</h5>
-    <ul class="list-group">
+<div class="d-flex justify-content-end mb-3">
+    <div class="parent-module-list text-end">
+        <small>{{ module_detail.years }}</small>
         {% for parent in parent_modules %}
-        <li class="list-group-item bg-secondary text-light">
-            <a href="{% url 'wiki:textmodule_detail' slug=parent.slug years=parent.years %}" class="text-light text-decoration-none">
-                {{ parent.title }}
-            </a>
-        </li>
+        <a href="{% url 'wiki:textmodule_detail' slug=parent.slug years=parent.years %}" class="badge bg-dark me-1 text-decoration-none">
+            {{ parent.title }}
+        </a>
+        {% if not forloop.last %}  {% endif %} &gt; <!-- 단계 구분 기호 -->
         {% endfor %}
-    </ul>
+        <span class="badge bg-dark">{{ module_detail.title }}</span> <!-- 현재 모듈 -->
+    </div>
 </div>
 {% endif %}
+<hr>
 
+<div class="mt-3 bg-dark p-3" style="min-height: 20em; border: 1px solid #555; border-radius: 10px;">
+    <div class="content-display">
+        <p>{{ module_detail.content|safe }}</p>
+    </div>
+</div>
+
+<hr>
 
 {% if child_modules %}
 <div class="mt-4">
-    <h5>자식 모듈</h5>
+    <h5>하위 문서</h5>
     <ul class="list-group">
         {% for child in child_modules %}
-        <li class="list-group-item bg-secondary text-light">
+        <li class="list-group-item bg-dark text-light" style="border: 1px solid #555;">
             <a href="{% url 'wiki:textmodule_detail' slug=child.slug years=child.years %}" class="text-light text-decoration-none">
                 {{ child.title }}
             </a>
@@ -47,50 +51,111 @@
     <h5>첨부 파일:</h5>
     <ul class="list-group">
         {% for file in file_list %}
-        <li class="list-group-item bg-secondary text-light">
+        <li class="list-group-item bg-dark text-light" style="border: 1px solid #555;">
             <a href="{{ file.file.url }}" download class="text-light text-decoration-none">
-                {{ file.file.name }}
+                [붙임{{ forloop.counter }}] {{ file.file.name|cut:"files/" }}
             </a>
         </li>
         {% endfor %}
     </ul>
 </div>
-{% else %}
-<p>첨부 파일이 없습니다.</p>
 {% endif %}
-
-<!-- 자식 모듈 생성 폼 -->
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ child_module_form.as_p }}
-    
-    <label>파일 추가:</label>
-    <div id="file-upload-container">
-        <input type="file" name="files" class="file-input">
-    </div>
-    <button type="button" id="add-file-button" class="btn btn-secondary mt-2">새 파일 추가</button>
-    
-    <button type="submit" class="btn btn-primary mt-3">자식 모듈 생성</button>
-</form>
-
-{% if error_message %}
-<div class="alert alert-danger">{{ error_message }}</div>
-{% endif %}
-
-<script>
-    document.getElementById('add-file-button').addEventListener('click', function() {
-        const container = document.getElementById('file-upload-container');
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.name = 'files';  // 모든 파일 입력 필드의 name 속성을 동일하게 설정
-        input.className = 'file-input mt-2';
-        container.appendChild(input);
-    });
-</script>
-
+<a href="{% url 'wiki:textmodule_list' %}" class="btn btn-outline-light mt-3">목록</a>
 <div class="mt-4">
-    <a href="{% url 'wiki:textmodule_edit' slug=module_detail.slug years=module_detail.years %}" class="btn btn-outline-primary">수정하기</a>
+    <a href="{% url 'wiki:textmodule_edit' slug=module_detail.slug years=module_detail.years %}" class="btn btn-outline-primary">수정</a>
+    <a href="{% url 'wiki:textmodule_delete' slug=module_detail.slug years=module_detail.years %}" class="btn btn-outline-danger">삭제</a>
 </div>
 
-<a href="{% url 'wiki:textmodule_list' %}" class="btn btn-outline-light mt-3">목록으로 돌아가기</a>
+<div>
+    <!-- 하위문서생성열기 버튼 -->
+    <button type="button" id="toggle-form-button" class="btn btn-success mt-3">하위문서생성열기</button>
+
+    <!-- 자식 모듈 생성 폼 (초기에는 숨겨져 있음) -->
+    <div id="child-module-form-container" style="display: none; margin-top: 20px;">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ child_module_form.as_p }}
+
+            <label>파일 추가:</label>
+            <div id="file-upload-container">
+                <input type="file" name="files" class="file-input">
+            </div>
+            <button type="button" id="add-file-button" class="btn btn-secondary mt-2">새 파일 추가</button>
+
+            <!-- 하위문서생성 버튼 -->
+            <button type="submit" class="btn btn-success mt-3">하위문서생성</button>
+        </form>
+    </div>
+
+    <style>
+        /* h3 요소와 목차 항목에 마우스를 올렸을 때 밑줄 표시 */
+        .content-display h3:hover,
+        #toc-list a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const content = document.querySelector('.content-display'); // Summernote 본문 컨테이너
+            const headers = content.querySelectorAll('h3');
+        
+            if (headers.length > 0) {
+                // 목차 컨테이너 생성
+                const tocContainer = document.createElement('div');
+                tocContainer.id = 'toc';
+                const tocList = document.createElement('ul');
+                tocList.id = 'toc-list';
+                tocList.style.listStyleType = 'none';
+                tocList.style.padding = '0';
+        
+                headers.forEach((header, index) => {
+                    // 본문 h3 앞에 번호 추가
+                    header.innerHTML = `<span>${index + 1}. </span>` + header.innerHTML;
+        
+                    // 각 h3에 고유 ID 추가
+                    const headerId = `section-${index + 1}`;
+                    header.setAttribute('id', headerId);
+        
+                    // 목차 항목 생성
+                    const listItem = document.createElement('li');
+                    listItem.style.marginBottom = '2px';
+        
+                    const link = document.createElement('a');
+                    link.textContent = header.textContent;
+                    link.href = `#${headerId}`;
+                    link.style.textDecoration = 'none';
+                    link.style.color = '#ffffff';
+        
+                    // hover 상태에서 밑줄이 표시되도록 스타일 수정
+                    link.addEventListener('mouseenter', function() {
+                        this.style.textDecoration = 'underline';
+                    });
+                    link.addEventListener('mouseleave', function() {
+                        this.style.textDecoration = 'none';
+                    });
+        
+                    listItem.appendChild(link);
+                    tocList.appendChild(listItem);
+        
+                    // h3 클릭 시 목차로 이동하는 이벤트 추가
+                    header.addEventListener('click', function() {
+                        tocContainer.scrollIntoView({ block: 'start' });
+                    });
+                });
+        
+                // 목차 타이틀 및 스타일 설정
+                tocContainer.innerHTML = '<h4 style="color: #ffffff;">목차</h4>';
+                tocContainer.appendChild(tocList);
+                tocContainer.style.padding = '10px';
+                tocContainer.style.border = '1px solid #ffffff';
+                tocContainer.style.borderRadius = '5px';
+                tocContainer.style.backgroundColor = '#000000';
+        
+                // Summernote 본문 상단에 목차 삽입
+                content.insertBefore(tocContainer, content.firstChild);
+            }
+        });
+        </script>
+</div>
 {% endblock %}

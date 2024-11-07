@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block main_area %}
+<h2>모듈 삭제</h2>
+<p>이 모듈을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">삭제</button>
+    <a href="{% url 'wiki:textmodule_detail' slug=object.slug years=object.years %}" class="btn btn-secondary">취소</a>
+</form>
+{% endblock %}

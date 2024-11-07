@@ -1,0 +1,50 @@
+/* Sidenav와 Uppernav의 기본 스타일 */
+.custom-sidenav {
+    width: 250px;
+    overflow-y: auto;
+    height: calc(100vh - 60px);
+    padding-top: 10px;
+}
+
+/* Uppernav와 Sidenav의 위치와 겹침 방지 */
+.custom-sidenav,
+.custom-scrollbar {
+    z-index: 1020;
+}
+
+nav {
+    z-index: 1030;
+}
+
+/* 링크 스타일링 */
+.container .card a {
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.container .card a:hover {
+    color: #cccccc;
+    text-decoration: underline;
+}
+
+/* Sidenav와 메인 콘텐츠 간의 여백 유지 */
+@media (max-width: 768px) {
+    .col-md-9.offset-md-3 {
+        margin-left: 0;
+    }
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+th {
+    background-color: rgb(69, 69, 69);
+    text-align: left;
+}

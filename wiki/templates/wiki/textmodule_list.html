@@ -2,9 +2,7 @@
 
 {% block main_area %}
 
-<a href="{% url 'wiki:textmodule_create' %}">
-    모듈생성
-</a>
+
 
 <!-- 드롭다운 -->
 <form id="yearForm" class="mb-4">
@@ -57,6 +55,11 @@
         </div>
         {% endfor %}
     </div>
+    <a href="{% url 'wiki:textmodule_create' %}" class="btn btn-outline-light mt-3">
+        모듈생성
+    </a>
+    
 </div>
+
 
 {% endblock %}

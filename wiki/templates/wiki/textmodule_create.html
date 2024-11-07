@@ -5,6 +5,14 @@
 
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
+    
+    <!-- 비필드 오류 표시 -->
+    {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+    
     {{ form.as_p }}
 
     <!-- 파일 업로드 필드 -->

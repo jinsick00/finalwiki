@@ -2,23 +2,23 @@
     <ul class="nav nav-pills flex-column mb-auto">
         <!-- 부모 모듈 반복 -->
         {% for parent in module_list %}
-        <li class="nav-item" style="border-top: 1px solid #555; margin-left: 10px; margin-right: 10px;">
-           <a href="{% url 'wiki:textmodule_detail' slug=parent.slug years=parent.years %}" class="text-light text-decoration-none">
+        <li class="nav-item module-item mb-2 p-2" style="margin-left: 10px; margin-right: 10px;"> <!-- mb-2로 세로 간격을 줄임 -->
+            <a href="{% url 'wiki:textmodule_detail' slug=parent.slug years=parent.years %}" class="text-light text-decoration-none d-block">
                 <strong>{{ parent.title }}</strong>
             </a>
-            <!-- 자식 모듈이 있는 경우 -->
-            {% if parent.child_modules.all %}
-            <ul class="nav flex-column ms-3 mt-2">
-                {% for child in parent.child_modules.all %}
-                <li class="nav-item">
-                    
-                        {{ child.title }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-            {% endif %}
         </li>
+        <!-- 자식 모듈이 있는 경우 -->
+        {% if parent.child_modules.all %}
+        <ul class="nav flex-column ms-3 mt-1"> <!-- mt-1로 자식 모듈의 세로 간격 조절 -->
+            {% for child in parent.child_modules.all %}
+            <li class="nav-item module-item mb-1 p-2"> <!-- mb-1로 자식 모듈 간격을 줄임 -->
+                <a href="{% url 'wiki:textmodule_detail' slug=child.slug years=child.years %}" class="text-light text-decoration-none d-block">
+                    - {{ child.title }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
         {% endfor %}
     </ul>
 </nav>

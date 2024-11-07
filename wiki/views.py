@@ -1,5 +1,5 @@
 import os
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .models import TextModule, TextModuleFile
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.text import slugify
@@ -7,7 +7,9 @@ from django.urls import reverse_lazy
 from .forms import TextModuleForm, TextModuleFileForm
 from django.http import HttpRequest
 from django.db import IntegrityError
-from django.db.models import Max, Q
+from django.db.models import Max
+import markdown
+from django.utils.safestring import mark_safe
 
 
 # Create your views here.
@@ -59,8 +61,11 @@ class TextModuleDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current_module'] = self.object
-        context['child_modules'] = self.object.child_modules.all()  # 직계 자식 모듈만 불러오기
+        context['module_detail'].content = mark_safe(markdown.markdown(context['module_detail'].content, extensions=['markdown.extensions.extra']))
+        context['current_module'] = self.object  # self.object가 current_module로 설정됨
+        context['child_modules'] = self.object.child_modules.all()  # 자식 모듈
+        context['file_list'] = self.object.files.all()  # 파일 리스트 추가
+        
 
         # 상위 모듈들을 담는 리스트 생성
         parent_modules = []
@@ -187,3 +192,30 @@ class TextModuleUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('wiki:textmodule_detail', kwargs={'slug': self.object.slug, 'years': self.object.years})
+    
+
+class TextModuleDeleteView(DeleteView):
+    model = TextModule
+    template_name = 'wiki/textmodule_confirm_delete.html'
+    success_url = reverse_lazy('wiki:textmodule_list')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        # "임시" 모듈 가져오기 또는 생성
+        temp_module, created = TextModule.objects.get_or_create(
+            title="임시",
+            defaults={
+                'content': '이 모듈은 자동으로 생성되었습니다.',
+                'years': 9999,  # 필요한 경우 연도를 지정
+                'access_level': 'all'  # 기본 접근 권한 설정
+            }
+        )
+
+        # 현재 모듈의 자식 모듈이 있는 경우 "임시" 모듈로 재할당
+        child_modules = self.object.child_modules.all()
+        if child_modules.exists():
+            child_modules.update(parent_module=temp_module)
+
+        # 부모 모듈 삭제
+        return super().delete(request, *args, **kwargs)

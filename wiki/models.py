@@ -3,6 +3,8 @@ from django.utils.text import slugify
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
+from django_summernote.fields import SummernoteTextFormField
+
 
 # Create your models here.
 
@@ -31,27 +33,9 @@ class TextModule(models.Model):
     access_level = models.CharField(max_length=10, choices=ACCESS_CHOICES, default='all')
 
     def save(self, *args, **kwargs):
-        # 중복 검증
-        if self.parent_module is None:
-            # 부모가 없는 경우 title과 years 조합이 고유해야 함
-            if TextModule.objects.filter(title=self.title, years=self.years, parent_module__isnull=True).exists():
-                raise ValidationError("A module with this title and year already exists without a parent.")
-        else:
-            # 부모가 있는 경우 parent_module, title, years 조합이 고유해야 함
-            if TextModule.objects.filter(title=self.title, years=self.years, parent_module=self.parent_module).exists():
-                raise ValidationError("A module with this title and year already exists under this parent.")
-
-        # 슬러그 설정
+        # 부모 모듈과 상관없이 title만을 기반으로 slug 설정
         if not self.slug:
-            base_slug = slugify(self.title, allow_unicode=True)
-            parent = self.parent_module
-            slug_parts = [base_slug]
-
-            while parent:
-                slug_parts.insert(0, slugify(parent.title, allow_unicode=True))
-                parent = parent.parent_module
-
-            self.slug = "-".join(slug_parts)
+            self.slug = slugify(self.title, allow_unicode=True)
 
         super(TextModule, self).save(*args, **kwargs)
 

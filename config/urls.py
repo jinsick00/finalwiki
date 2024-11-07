@@ -25,6 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', index, name='index'),
     path('wiki/', include('wiki.urls')),  # 앱의 URL 패턴 포함
+    path('summernote/', include('django_summernote.urls')),
 ]
 
 if settings.DEBUG:
