@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import timedelta
 from django_summernote.fields import SummernoteTextFormField
-
+import os
 
 # Create your models here.
 
@@ -38,6 +38,16 @@ class TextModule(models.Model):
             self.slug = slugify(self.title, allow_unicode=True)
 
         super(TextModule, self).save(*args, **kwargs)
+
+
+    def delete(self, *args, **kwargs):
+        # 파일 경로를 저장하고 모델 인스턴스 삭제 후 파일 삭제
+        file_path = self.file.path
+        super().delete(*args, **kwargs)
+        
+        # 파일이 존재하면 파일 삭제
+        if os.path.isfile(file_path):
+            os.remove(file_path)
 
 
     def __str__(self):

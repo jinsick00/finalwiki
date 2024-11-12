@@ -6,7 +6,16 @@
             <a href="{% url 'wiki:textmodule_detail' slug=current_module.slug years=current_module.years %}" class="text-light text-decoration-none">
                 <strong>{{ current_module.title }}</strong>
             </a>
-            {% if child_modules %}
+            
+            <!-- 본문 내 h3 태그를 기반으로 생성된 목차 -->
+            <ul id="toc-list" class="nav flex-column ms-3 mt-2">
+                <!-- JavaScript에서 동적으로 삽입할 목차 목록 -->
+            </ul>
+        </li>
+        
+        {% if child_modules %}
+        <li class="nav-item mt-4">
+            <h5>하위 문서</h5>
             <ul class="nav flex-column ms-3 mt-2">
                 {% for child in child_modules %}
                 <li class="nav-item">
@@ -16,7 +25,54 @@
                 </li>
                 {% endfor %}
             </ul>
-            {% endif %}
         </li>
+        {% endif %}
     </ul>
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 목차 목록과 본문 컨테이너 가져오기
+        const content = document.querySelector('.content-display');
+        const headers = content.querySelectorAll('h3');
+        const tocList = document.getElementById('toc-list');
+
+        headers.forEach((header, index) => {
+            // 각 h3에 고유 ID 추가
+            const headerId = `section-${index + 1}`;
+            header.setAttribute('id', headerId);
+
+            // Sidenav에 목차 항목 추가
+            const listItem = document.createElement('li');
+            listItem.className = 'nav-item';
+
+            const link = document.createElement('a');
+            link.textContent = `${index + 1}. ${header.textContent}`;
+            link.href = `#${headerId}`;
+            link.className = 'text-light text-decoration-none';
+
+            listItem.appendChild(link);
+            tocList.appendChild(listItem);
+
+            // 본문 스크롤 위치에 따라 Sidenav 목차 항목 활성화
+            window.addEventListener('scroll', function() {
+                const headerTop = header.getBoundingClientRect().top;
+                if (headerTop >= 0 && headerTop <= window.innerHeight / 2) {
+                    document.querySelectorAll('#toc-list a').forEach(a => a.classList.remove('active'));
+                    link.classList.add('active');
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    /* 활성화된 목차 항목 스타일 */
+    #toc-list .active {
+        font-weight: bold;
+        color: #ffffff;
+        background-color: #333;
+        padding: 5px;
+        border-radius: 3px;
+    }
+</style>
