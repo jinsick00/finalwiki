@@ -12,6 +12,7 @@ import markdown
 from django.utils.safestring import mark_safe
 
 
+
 # Create your views here.
 
 class TextModuleListView(ListView):
@@ -200,22 +201,7 @@ class TextModuleDeleteView(DeleteView):
     success_url = reverse_lazy('wiki:textmodule_list')
 
     def delete(self, request, *args, **kwargs):
+        # 삭제할 모듈 가져오기
         self.object = self.get_object()
 
-        # "임시" 모듈 가져오기 또는 생성
-        temp_module, created = TextModule.objects.get_or_create(
-            title="임시",
-            defaults={
-                'content': '이 모듈은 자동으로 생성되었습니다.',
-                'years': 9999,  # 필요한 경우 연도를 지정
-                'access_level': 'all'  # 기본 접근 권한 설정
-            }
-        )
-
-        # 현재 모듈의 자식 모듈이 있는 경우 "임시" 모듈로 재할당
-        child_modules = self.object.child_modules.all()
-        if child_modules.exists():
-            child_modules.update(parent_module=temp_module)
-
-        # 부모 모듈 삭제
         return super().delete(request, *args, **kwargs)

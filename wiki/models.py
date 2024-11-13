@@ -5,8 +5,16 @@ from django.utils import timezone
 from datetime import timedelta
 from django_summernote.fields import SummernoteTextFormField
 import os
+from django.dispatch import receiver
+from django.db.models.signals import post_delete
 
 # Create your models here.
+
+def upload_to_module_directory(instance, filename):
+    # 연도 및 모듈 제목을 경로에 포함하여 저장
+    module_title = instance.module.title.replace(" ", "_")  # 공백을 밑줄로 변경
+    years = instance.module.years
+    return f'files/{years}/{module_title}/{filename}'
 
 class TextModule(models.Model):
     ACCESS_CHOICES = [
@@ -40,18 +48,13 @@ class TextModule(models.Model):
         super(TextModule, self).save(*args, **kwargs)
 
 
-    def delete(self, *args, **kwargs):
-        # 파일 경로를 저장하고 모델 인스턴스 삭제 후 파일 삭제
-        file_path = self.file.path
-        super().delete(*args, **kwargs)
-        
-        # 파일이 존재하면 파일 삭제
-        if os.path.isfile(file_path):
-            os.remove(file_path)
+    
 
 
     def __str__(self):
         return self.title
+    
+
     
 
 class TextModuleFile(models.Model):
@@ -62,8 +65,19 @@ class TextModuleFile(models.Model):
     ('guideline', '지침')
     ]
     module = models.ForeignKey(TextModule, related_name='files', on_delete=models.CASCADE)
-    file = models.FileField(upload_to='files/')  # 파일 업로드 필드
+    file = models.FileField(upload_to=upload_to_module_directory)  # 파일 업로드 필드
 
+    # 붙임파일 폴더경로 안보이게 하기(템플릿에서 사용)
+    def get_filename(self):
+        return os.path.basename(self.file.name)
+    
     def __str__(self):
         return self.file.name
 
+# 모델 인스턴스 삭제 시 실제 파일도 삭제
+@receiver(post_delete, sender=TextModuleFile)
+def delete_file_on_model_delete(sender, instance, **kwargs):
+    if instance.file:
+        file_path = instance.file.path
+        if os.path.isfile(file_path):
+            os.remove(file_path)

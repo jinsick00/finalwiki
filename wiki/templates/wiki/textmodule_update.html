@@ -18,12 +18,15 @@
     <h5>기존 파일</h5>
     <ul class="list-group">
         {% for existing_file in existing_files %}
-        <li class="list-group-item bg-secondary text-light">
+        <li class="list-group-item bg-secondary text-light" id="file-{{ existing_file.id }}">
             <div class="d-flex justify-content-between align-items-center">
                 <a href="{{ existing_file.file.url }}" download="{{ existing_file.file_name }}" class="text-light">
-                    {{ existing_file.file_name }}
+                    [붙임{{ forloop.counter }}] {{ existing_file.file_name }}
                 </a>
-                <input type="checkbox" name="delete_files" value="{{ existing_file.id }}"> 삭제
+                <button type="button" class="btn btn-danger btn-sm ms-2" id="delete-button-{{ existing_file.id }}" onclick="markForDeletion({{ existing_file.id }})">
+                    삭제
+                </button>
+                <input type="hidden" name="delete_files" value="{{ existing_file.id }}" disabled>
             </div>
         </li>
         {% endfor %}
@@ -49,4 +52,43 @@
     });
 </script>
 
+<script>
+    function markForDeletion(fileId) {
+        const fileElement = document.getElementById(`file-${fileId}`);
+        const deleteInput = fileElement.querySelector(`input[name="delete_files"]`);
+        const deleteButton = document.getElementById(`delete-button-${fileId}`);
+    
+        if (fileElement && deleteInput && deleteButton) {
+            // 파일을 흐리게 표시 및 취소선 추가
+            fileElement.style.opacity = '0.5';
+            fileElement.style.textDecoration = 'line-through';
+            deleteInput.disabled = false; // 삭제할 파일을 폼에 제출 가능하게 설정
+    
+            // 삭제 버튼을 취소 버튼으로 변경
+            deleteButton.textContent = '취소';
+            deleteButton.classList.remove('btn-danger');
+            deleteButton.classList.add('btn-secondary');
+            deleteButton.setAttribute('onclick', `cancelDeletion(${fileId})`);
+        }
+    }
+    
+    function cancelDeletion(fileId) {
+        const fileElement = document.getElementById(`file-${fileId}`);
+        const deleteInput = fileElement.querySelector(`input[name="delete_files"]`);
+        const deleteButton = document.getElementById(`delete-button-${fileId}`);
+    
+        if (fileElement && deleteInput && deleteButton) {
+            // 파일을 원래 상태로 복원
+            fileElement.style.opacity = '1';
+            fileElement.style.textDecoration = 'none';
+            deleteInput.disabled = true; // 폼에 포함되지 않도록 비활성화
+    
+            // 취소 버튼을 다시 삭제 버튼으로 변경
+            deleteButton.textContent = '삭제';
+            deleteButton.classList.remove('btn-secondary');
+            deleteButton.classList.add('btn-danger');
+            deleteButton.setAttribute('onclick', `markForDeletion(${fileId})`);
+        }
+    }
+    </script>
 {% endblock %}

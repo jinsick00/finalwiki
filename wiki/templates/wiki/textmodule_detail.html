@@ -53,7 +53,7 @@
         {% for file in file_list %}
         <li class="list-group-item bg-dark text-light" style="border: 1px solid #555;">
             <a href="{{ file.file.url }}" download class="text-light text-decoration-none">
-                [붙임{{ forloop.counter }}] {{ file.file.name|cut:"files/" }}
+                [붙임{{ forloop.counter }}] {{ file.get_filename }}
             </a>
         </li>
         {% endfor %}

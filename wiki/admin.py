@@ -14,3 +14,9 @@ class TextModuleAdmin(admin.ModelAdmin):
     list_filter = ('years', 'access_level')  # 필터링 옵션
     prepopulated_fields = {'slug': ('title',)}  # 슬러그를 제목을 기반으로 자동 생성
     inlines = [TextModuleFileInline]  # 파일을 인라인으로 추가
+
+@admin.register(TextModuleFile)
+class TextModuleFileAdmin(admin.ModelAdmin):
+    list_display = ('file_name', 'module', 'file')
+    search_fields = ('file_name',)
+    list_filter = ('module',)  # 연결된 모듈을 필터로 추가
