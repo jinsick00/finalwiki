@@ -7,6 +7,7 @@ from django_summernote.fields import SummernoteTextFormField
 import os
 from django.dispatch import receiver
 from django.db.models.signals import post_delete
+from django.core.exceptions import ValidationError
 
 # Create your models here.
 
@@ -22,34 +23,26 @@ class TextModule(models.Model):
         ('staff', 'Staff 및 Superuser 전용'),
         ('superuser', 'Superuser 전용'),
     ]
-    
-    title = models.CharField(max_length=200)  # 제목
-    content = models.TextField()  # 내용
-    years = models.PositiveIntegerField()  # 연도 필드
+
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    years = models.PositiveIntegerField()
     parent_module = models.ForeignKey(
         'self', null=True, blank=True, related_name='child_modules', on_delete=models.CASCADE
     )
-    slug = models.SlugField()  # URL-friendly 문자열
+    slug = models.SlugField(blank=True)  # Allow blank slugs
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['parent_module', 'title', 'years'], name='unique_parent_title_years')
+            models.UniqueConstraint(fields=['title', 'years'], name='unique_title_years')
         ]
-    
-    
-    # 접근 권한 필드 추가
+
     access_level = models.CharField(max_length=10, choices=ACCESS_CHOICES, default='all')
 
     def save(self, *args, **kwargs):
-        # 부모 모듈과 상관없이 title만을 기반으로 slug 설정
-        if not self.slug:
-            self.slug = slugify(self.title, allow_unicode=True)
-
+        # 슬러그를 항상 title 기반으로 설정
+        self.slug = slugify(self.title, allow_unicode=True)
         super(TextModule, self).save(*args, **kwargs)
-
-
-    
-
 
     def __str__(self):
         return self.title

@@ -66,14 +66,15 @@
     <ul class="list-group">
         {% for file in file_list %}
         <li class="list-group-item bg-dark text-light" style="border: 1px solid #555;">
-            <a href="{{ file.file.url }}" download class="text-light text-decoration-none">
-                [붙임{{ forloop.counter }}] {{ file.file.name|cut:"files/" }}
+            <a href="{{ file.file.url }}" download class="text-light text-decoration-none file-link">
+                [붙임{{ forloop.counter }}] {{ file.get_filename }}
             </a>
         </li>
         {% endfor %}
     </ul>
 </div>
 {% endif %}
+
 <a href="{% url 'wiki:textmodule_list' %}" class="btn btn-outline-light mt-3">목록</a>
 <div class="mt-4">
     <a href="{% url 'wiki:textmodule_edit' slug=module_detail.slug years=module_detail.years %}" class="btn btn-outline-primary">수정</a>
@@ -101,6 +102,26 @@
         </form>
     </div>
 </div>
+
+<!-- 자바스크립트 코드 추가 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 하위문서생성열기 버튼과 폼 요소 가져오기
+        const toggleFormButton = document.getElementById('toggle-form-button');
+        const formContainer = document.getElementById('child-module-form-container');
+
+        // 버튼이 클릭되었을 때 폼의 표시 상태를 전환
+        toggleFormButton.addEventListener('click', function() {
+            if (formContainer.style.display === 'none') {
+                formContainer.style.display = 'block';
+                toggleFormButton.textContent = '하위문서생성닫기'; // 버튼 텍스트 변경
+            } else {
+                formContainer.style.display = 'none';
+                toggleFormButton.textContent = '하위문서생성열기'; // 버튼 텍스트 원래대로
+            }
+        });
+    });
+</script>
 <style>
     /* 모든 테이블이 화면에 맞춰지도록 설정 */
     .content-display table {
