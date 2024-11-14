@@ -3,7 +3,7 @@
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item" style="border-top: 1px solid #555; margin-left: 10px; margin-right: 10px;">
             <!-- 현재 모듈 제목을 하이퍼링크로 표시 -->
-            <a href="{% url 'wiki:textmodule_detail' slug=current_module.slug years=current_module.years %}" class="text-light text-decoration-none">
+            <a href="{% url 'wiki:textmodule_detail' slug=current_module.slug years=current_module.years %}" class="text-light text-decoration-none module-title-link">
                 <strong>{{ current_module.title }}</strong>
             </a>
             
@@ -12,49 +12,30 @@
                 <!-- JavaScript에서 동적으로 삽입할 목차 목록 -->
             </ul>
         </li>
-        
-        {% if child_modules %}
-        <li class="nav-item mt-4">
-            <h5>하위 문서</h5>
-            <ul class="nav flex-column ms-3 mt-2">
-                {% for child in child_modules %}
-                <li class="nav-item">
-                    <a href="{% url 'wiki:textmodule_detail' slug=child.slug years=child.years %}" class="text-light text-decoration-none">
-                        {{ child.title }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-        </li>
-        {% endif %}
     </ul>
 </nav>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // 목차 목록과 본문 컨테이너 가져오기
         const content = document.querySelector('.content-display');
         const headers = content.querySelectorAll('h3');
         const tocList = document.getElementById('toc-list');
 
         headers.forEach((header, index) => {
-            // 각 h3에 고유 ID 추가
             const headerId = `section-${index + 1}`;
             header.setAttribute('id', headerId);
 
-            // Sidenav에 목차 항목 추가
             const listItem = document.createElement('li');
-            listItem.className = 'nav-item';
+            listItem.className = 'nav-item toc-item';
 
             const link = document.createElement('a');
-            link.textContent = `${index + 1}. ${header.textContent}`;
+            link.textContent = header.textContent;  // 숫자를 제거하고 제목만 표시
             link.href = `#${headerId}`;
-            link.className = 'text-light text-decoration-none';
+            link.className = 'text-light text-decoration-none toc-link';
 
             listItem.appendChild(link);
             tocList.appendChild(listItem);
 
-            // 본문 스크롤 위치에 따라 Sidenav 목차 항목 활성화
             window.addEventListener('scroll', function() {
                 const headerTop = header.getBoundingClientRect().top;
                 if (headerTop >= 0 && headerTop <= window.innerHeight / 2) {
@@ -67,6 +48,25 @@
 </script>
 
 <style>
+    /* 기본 스타일 및 간격 추가 */
+    .module-title-link, .toc-link {
+        margin-bottom: 8px;
+        padding: 8px;
+        display: block;
+        border-radius: 4px;
+        transition: background-color 0.2s;
+    }
+
+    /* 간격 및 hover 스타일 */
+    .toc-item {
+        margin-bottom: 5px;
+    }
+
+    /* hover 시 배경색 변경 */
+    .module-title-link:hover, .toc-link:hover {
+        background-color: #444;
+    }
+
     /* 활성화된 목차 항목 스타일 */
     #toc-list .active {
         font-weight: bold;

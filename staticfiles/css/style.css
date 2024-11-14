@@ -48,3 +48,18 @@ th {
     background-color: rgb(69, 69, 69);
     text-align: left;
 }
+
+/* 모든 테이블이 화면에 맞춰지도록 설정 */
+.content-display table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: auto; /* 셀 너비를 컨텐츠에 따라 자동으로 조정 */
+    border-collapse: collapse;
+}
+
+/* 테이블의 기본 스타일 */
+.content-display th, .content-display td {
+    padding: 8px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
