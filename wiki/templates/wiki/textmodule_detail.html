@@ -13,8 +13,8 @@
         {% for parent in parent_modules %}
         <a href="{% url 'wiki:textmodule_detail' slug=parent.slug years=parent.years %}" class="badge bg-dark me-1 text-decoration-none">
             {{ parent.title }}
-        </a>
-        {% if not forloop.last %} &gt; {% endif %} <!-- 단계 구분 기호 -->
+        </a> &gt;
+        {% if not forloop.last %}  {% endif %} <!-- 단계 구분 기호 -->
         {% endfor %}
         <span class="badge bg-dark">{{ module_detail.title }}</span> <!-- 현재 모듈 -->
     </div>
