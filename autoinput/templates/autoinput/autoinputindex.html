@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block main_area %}
+<div>
+    <p>웹 상에서 업무자동화가 가능한 페이지임</p>
+    <p>이 작업외에도 엑셀 작업 중 주기적으로 하며, 거의 변동이 없는 업무의 경우 이런 식으로 처리 가능</p>
+</div>
+<div class="row row-cols-2">
+    <div class="col">
+        <ul>
+            <form action="combine_files" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <h2>4대보험 사업주부담금 합치기</h2>
+                <li>건강보험</li>
+                <input id="health_input" type="file" name="health_input" class="form-control btn btn-outline-light"
+                    accept=".xlsx">
+
+                <li>국민연금</li>
+                <input id="national_input" type="file" name="national_input" class="form-control btn btn-outline-light"
+                    accept=".xlsx">
+
+                <li>고용보험</li>
+                <input id="employ_input" type="file" name="employ_input" class="form-control btn btn-outline-light"
+                    accept=".xlsx">
+                <li>산재보험</li>
+                <input id="industrial_input" type="file" name="industrial_input" class="form-control btn btn-outline-light"
+                    accept=".xlsx">
+
+                <li id="download"><button type="submit" class="btn btn-outline-light">합친 파일 받기</button></li>
+            </form>
+        </ul>
+
+    </div>
+
+{% endblock %}

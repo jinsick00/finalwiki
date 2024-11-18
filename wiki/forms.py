@@ -61,9 +61,7 @@ class TextModuleForm(forms.ModelForm):
             parent_module=parent_module
         ).exclude(id=instance_id)
 
-        # 디버깅 메시지
-        print(f"[DEBUG] Title: {title}, Years: {years}, Parent Module: {parent_module}, Instance ID: {instance_id}")
-        print(f"[DEBUG] Existing Query Count: {existing_query.count()}")  # 중복 검사의 결과 개수 확인
+        
 
         # 중복 검사 조건
         if existing_query.exists():
