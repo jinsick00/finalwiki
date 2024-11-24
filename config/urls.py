@@ -19,6 +19,9 @@ from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from . views import index
+from django.conf.urls import handler404
+
+handler404 = 'django.views.defaults.page_not_found'
 
 
 urlpatterns = [
@@ -27,6 +30,7 @@ urlpatterns = [
     path('wiki/', include('wiki.urls')),  # 앱의 URL 패턴 포함
     path('summernote/', include('django_summernote.urls')),
     path("autoinput/", include("autoinput.urls")),
+     path('accounts/', include('accounts.urls')),
 ]
 
 if settings.DEBUG:

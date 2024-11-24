@@ -77,12 +77,15 @@
 
 <a href="{% url 'wiki:textmodule_list' %}" class="btn btn-outline-light mt-3">목록</a>
 <div class="mt-4">
+    {% if request.user.is_authenticated and request.user.is_staff %}
     <a href="{% url 'wiki:textmodule_edit' slug=module_detail.slug years=module_detail.years %}" class="btn btn-outline-primary">수정</a>
     <a href="{% url 'wiki:textmodule_delete' slug=module_detail.slug years=module_detail.years %}" class="btn btn-outline-danger">삭제</a>
+    {% endif %}
 </div>
 
 <div>
     <!-- 하위문서생성열기 버튼 -->
+    {% if request.user.is_authenticated and request.user.is_staff %}
     <button type="button" id="toggle-form-button" class="btn btn-success mt-3">하위문서생성열기</button>
 
     <!-- 자식 모듈 생성 폼 (초기에는 숨겨져 있음) -->
@@ -101,6 +104,7 @@
             <button type="submit" class="btn btn-success mt-3">하위문서생성</button>
         </form>
     </div>
+    {% endif %}
 </div>
 
 <!-- 자바스크립트 코드 추가 -->

@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-pb07n6l-bbjyl$2nkcxw*w$pf)u_a*%gusj$_q64ngkat9r3y9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    "accounts",
     "django_summernote",
     "autoinput",
     "wiki",
@@ -149,3 +150,6 @@ SUMMERNOTE_CONFIG = {
         '/static/css/custom_summernote.css',  # 사용자 정의 CSS 파일 경로
     ),
 }
+
+LOGIN_REDIRECT_URL = '/'  # 로그인 후 리다이렉트할 URL
+LOGOUT_REDIRECT_URL = '/wiki/'  # 로그아웃 후 리다이렉트할 URL

@@ -10,10 +10,26 @@ from django.db import IntegrityError
 from django.db.models import Max
 import markdown
 from django.utils.safestring import mark_safe
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import Http404
 
 
 
 # Create your views here.
+
+class LoginAndPermissionRequiredMixin(UserPassesTestMixin):
+    login_url = reverse_lazy('accounts:login')  # 로그인 페이지로 이동
+    raise_exception = False  # 권한 없을 때 404 반환 대신 커스텀 처리
+
+    def test_func(self):
+        # Staff 또는 Superuser만 접근 가능
+        return self.request.user.is_authenticated and (self.request.user.is_staff or self.request.user.is_superuser)
+
+    def handle_no_permission(self):
+        if not self.request.user.is_authenticated:
+            return redirect(self.login_url)  # 로그인하지 않은 경우 로그인 페이지로 이동
+        else:
+            raise Http404("권한이 없습니다.")  # 단순 유저는 404 반환
 
 class TextModuleListView(ListView):
     model = TextModule
@@ -118,7 +134,7 @@ class TextModuleDetailView(DetailView):
         context['file_form'] = file_form
         return self.render_to_response(context)
     
-class TextModuleCreateView(CreateView):
+class TextModuleCreateView(LoginAndPermissionRequiredMixin, CreateView):
     model = TextModule
     form_class = TextModuleForm
     template_name = 'wiki/textmodule_create.html'
@@ -143,7 +159,7 @@ class TextModuleCreateView(CreateView):
             return reverse_lazy('wiki:textmodule_detail', kwargs={'slug': parent_module.slug, 'years': parent_module.years})
         return reverse_lazy('wiki:textmodule_list')
     
-class TextModuleUpdateView(UpdateView):
+class TextModuleUpdateView(LoginAndPermissionRequiredMixin, UpdateView):
     model = TextModule
     form_class = TextModuleForm
     template_name = 'wiki/textmodule_update.html'
@@ -195,7 +211,7 @@ class TextModuleUpdateView(UpdateView):
         return reverse_lazy('wiki:textmodule_detail', kwargs={'slug': self.object.slug, 'years': self.object.years})
     
 
-class TextModuleDeleteView(DeleteView):
+class TextModuleDeleteView(LoginAndPermissionRequiredMixin, DeleteView):
     model = TextModule
     template_name = 'wiki/textmodule_confirm_delete.html'
     success_url = reverse_lazy('wiki:textmodule_list')

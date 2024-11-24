@@ -55,10 +55,9 @@
         </div>
         {% endfor %}
     </div>
-    <a href="{% url 'wiki:textmodule_create' %}" class="btn btn-outline-light mt-3">
-        모듈생성
-    </a>
-    
+    {% if user.is_staff or user.is_superuser %}
+    <a href="{% url 'wiki:textmodule_create' %}" class="btn btn-outline-light mt-3">모듈생성</a>
+    {% endif %}
 </div>
 
 

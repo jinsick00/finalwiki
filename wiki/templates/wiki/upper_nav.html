@@ -9,6 +9,24 @@
                 <li class="nav-item d-flex align-items-center">
                     <a class="nav-link text-light me-3" href="{% url 'wiki:textmodule_list' %}">위키</a>
                     <a class="nav-link text-light" href="{% url 'autoinput:input_index' %}">업무자동화</a>
+                    {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <!-- 로그인한 사용자 ID 표시 -->
+                    <span class="nav-link text-light">[{{ user.username }}]</span>
+                </li>
+                <li class="nav-item">
+                    <!-- 로그아웃 버튼 -->
+                    <form method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-link nav-link text-light">로그아웃</button>
+                    </form>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <!-- 로그인 버튼 -->
+                    <a class="nav-link text-light" href="{% url 'accounts:login' %}">로그인</a>
+                </li>
+                {% endif %}
                 </li>
             </ul>
         </div>
