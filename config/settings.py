@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-pb07n6l-bbjyl$2nkcxw*w$pf)u_a*%gusj$_q64ngkat9r3y9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -136,7 +136,7 @@ STATIC_URL = '/static/'
 
 # base.html과 같은 폴더에 CSS 파일을 두고 싶다면, 아래와 같이 설정합니다.
 STATICFILES_DIRS = [
-    BASE_DIR / "config/static",  # base.html이 config 디렉터리에 있는 경우
+    BASE_DIR / "config/static/",  # base.html이 config 디렉터리에 있는 경우
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # 정적 파일 수집 경로

@@ -2,8 +2,6 @@
 
 {% block main_area %}
 
-
-
 <!-- 드롭다운 -->
 <form id="yearForm" class="mb-4">
     <label for="yearSelect">연도 선택:</label>
@@ -18,7 +16,7 @@
 <script>
     document.getElementById('yearSelect').addEventListener('change', function() {
         const selectedYear = this.value;
-        const url = selectedYear ? `{% url 'wiki:textmodule_list_filtered' years=0 %}`.replace('0', selectedYear) : "{% url 'wiki:textmodule_list' %}";
+        const url = selectedYear ? `{% url 'wiki:textmodule_list_filtered' years=0 %}`.replace('0', selectedYear) : "{% url 'wiki:textmodule_list' %}`;
         window.location.href = url;
     });
 </script>
@@ -30,7 +28,7 @@
             <div class="card bg-dark text-light h-100">
                 <div class="card-body">
                     <h3 class="card-title">
-                        <a href="{% url 'wiki:textmodule_detail' slug=parent.slug years=parent.years %}">
+                        <a href="{% url 'wiki:textmodule_detail' slug=parent.slug years=parent.years %}" class="custom-link">
                             {{ parent.title }}
                         </a>
                         {% if not selected_year and not parent.parent_module %}
@@ -42,7 +40,7 @@
                         <ul class="list-group list-group-flush">
                             {% for child in parent.child_modules.all %}
                             <li class="list-group-item bg-secondary text-light">
-                                <a href="{% url 'wiki:textmodule_detail' slug=child.slug years=child.years %}">
+                                <a href="{% url 'wiki:textmodule_detail' slug=child.slug years=child.years %}" class="custom-link">
                                     {{ child.title }}
                                 </a>
                             </li>
@@ -60,5 +58,17 @@
     {% endif %}
 </div>
 
+<style>
+    /* 하이퍼링크의 기본 스타일 */
+    .custom-link {
+        color: white; /* 링크 텍스트를 흰색으로 */
+        text-decoration: none; /* 밑줄 제거 */
+    }
+
+    /* 하이퍼링크 hover 시 스타일 */
+    .custom-link:hover {
+        color: #ccc; /* hover 시 흰색에서 약간 밝은 회색으로 변경 */
+    }
+</style>
 
 {% endblock %}
